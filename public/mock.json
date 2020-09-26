@@ -1,0 +1,32 @@
+[
+  {
+    "name": "iPhone 11 Pro Max - Verde Media Noche",
+    "rating": 4,
+    "reviews": 223,
+    "seller": "",
+    "image": "https://i.linio.com/p/4c39b1854d048c7a661b60dc1d026c22-zoom.jpg",
+    "fromPrice": "",
+    "discountPercent": "",
+    "price": "$27,499.00"
+  },
+  {
+    "name": "Celular Huawei Mate 30 Pro 128 GB Dual SIM Desbloqueado Negro",
+    "rating": 5,
+    "reviews": 13,
+    "seller": "",
+    "image": "https://i.linio.com/p/c5fcab3d6cb79f30e216409da70aab9e-catalog.webp",
+    "fromPrice": "$22,999.00",
+    "discountPercent": "-21%",
+    "price": "$17,999.00"
+  },
+  {
+    "name": "Smartphone Motorola G8 Power azul 64 gb + 4 gb",
+    "rating": 0,
+    "reviews": 607,
+    "seller": "",
+    "image": "https://i.linio.com/p/73450d483a16236650c191ab8c985375-zoom.jpg",
+    "fromPrice": "",
+    "discountPercent": "",
+    "price": "$5,499.00"
+  }
+]
