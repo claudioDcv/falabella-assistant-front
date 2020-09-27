@@ -17,6 +17,7 @@ const template = `
   position: fixed;
   bottom: 10px;
   right: 10px;
+  z-index: 999999999999999999999;
 }
 
 #assistant-offer-container.open #assistant-offer,
@@ -65,7 +66,7 @@ const template = `
 #assistant-offer .app-name {
   padding: 0px;
   margin: 0px;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: bold;
   background-color: #aad500;
   padding: 10px 0;
@@ -73,7 +74,7 @@ const template = `
   color: #fff;
 }
 
-#assistant-offer .content {
+#assistant-offer #assistant-offer-content {
   padding: 8px;
 }
 
@@ -104,54 +105,118 @@ const template = `
 </div>
 <div id="assistant-offer">
   <h1 class="app-name">Falabella Assistant</h1>
-  <div class="content">
+  <a href="{{ link }}" target="_blank">
+  <div id="assistant-offer-content">
     <div class="image">
-      <img
-        src="https://i.linio.com/p/4c39b1854d048c7a661b60dc1d026c22-zoom.jpg"
+      <imggi
+        src="{{ image }}"
       />
     </div>
-    <div class="title">iPhone 11 Pro Max - Verde Media Noche</div>
-    <div class="price">$27,499.00</div>
+    <div class="title">{{ name }}</div>
+    <div class="price">{{ price }}</div>
   </div>
+  </a>
 </div>
 </div>
 `;
 
 window.onload = () => {
-  const script = document.createElement("script");
-
-  script.onload = () => {
-    fetch("http://localhost:3000/offer.json").then((data) => {
-      const root = document.createElement("div");
-
-      const element = Mustache.render(template, {});
-      root.innerHTML = element;
-
-      document.body.appendChild(root);
-
-      document
-        .getElementById("assistant-offer")
-        .addEventListener("click", () => {
-          document
-            .getElementById("assistant-offer-container")
-            .classList.toggle("open");
-        });
-
-      document
-        .getElementById("falabella-logo")
-        .addEventListener("click", () => {
-          document
-            .getElementById("assistant-offer-container")
-            .classList.toggle("open");
-        });
-
-      document.getElementById("close-buttom").addEventListener("click", () => {
-        document.getElementById("assistant-offer-container").remove();
-      });
-    });
+  const loadjs = (url, callback) => {
+    const script = document.createElement("script");
+    script.setAttribute("src", chrome.extension.getURL(url));
+    if (callback) {
+      script.onload = callback;
+    }
+    document.body.appendChild(script);
   };
 
-  script.setAttribute("src", chrome.extension.getURL("js/mustache.js"));
+  const isAmazon = () => {
+    if (
+      location.host.includes("amazon") &&
+      document.getElementById("productTitle") !== null
+    ) {
+      return true;
+    }
 
-  document.body.appendChild(script);
+    return false;
+  };
+
+  const isMercadoLibre = () => {
+    if (
+      location.host.includes("mercadolibre") &&
+      document.querySelector("h1.ui-pdp-title") !== null
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const getAmazonProduct = () => {
+    return document.getElementById("productTitle").textContent.trim();
+  };
+
+  const getMercadoLivreProduct = () => {
+    return document.querySelector("h1.ui-pdp-title").textContent.trim();
+  };
+
+  const getProductName = () => {
+    if (isAmazon()) {
+      return getAmazonProduct();
+    }
+
+    if (isMercadoLibre()) {
+      return getMercadoLivreProduct();
+    }
+
+    return null;
+  };
+
+  loadjs("js/axios.js", () => {
+    loadjs("js/mustache.js", mustacheLoaded);
+  });
+
+  const mustacheLoaded = () => {
+    const productName = getProductName();
+    if (productName === null) {
+      return false;
+    }
+
+    axios
+      .get(`http://localhost:8000/product-suggestion?search=${productName}`)
+      .then((response) => {
+        const root = document.createElement("div");
+
+        if (response.data === {}) {
+          return;
+        }
+
+        const element = Mustache.render(template, response.data);
+        root.innerHTML = element;
+
+        document.body.appendChild(root);
+
+        document
+          .getElementById("assistant-offer")
+          .addEventListener("click", () => {
+            document
+              .getElementById("assistant-offer-container")
+              .classList.toggle("open");
+          });
+
+        document
+          .getElementById("falabella-logo")
+          .addEventListener("click", () => {
+            document
+              .getElementById("assistant-offer-container")
+              .classList.toggle("open");
+          });
+
+        document
+          .getElementById("close-buttom")
+          .addEventListener("click", () => {
+            document.getElementById("assistant-offer-container").remove();
+          });
+      });
+  };
 };
