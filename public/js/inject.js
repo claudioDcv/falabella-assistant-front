@@ -108,8 +108,8 @@ const template = `
   <a href="{{ link }}" target="_blank">
   <div id="assistant-offer-content">
     <div class="image">
-      <imggi
-        src="{{ image }}"
+      <img
+        src="https://dummyimage.com/800x900/000/fff.png&text=Product"
       />
     </div>
     <div class="title">{{ name }}</div>
